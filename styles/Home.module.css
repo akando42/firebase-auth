@@ -1,0 +1,13 @@
+.container {
+	width: 100vw;
+	height: 100vh;
+	/*background-color: #F2F4F7;*/
+	background-color: red;
+}
+
+.topNav {
+	width: 100vw;
+	height: 6vh;
+	/*background-color: red;*/
+	font-size: 100px;
+}
