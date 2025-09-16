@@ -1,13 +1,117 @@
 .container {
 	width: 100vw;
 	height: 100vh;
-	/*background-color: #F2F4F7;*/
-	background-color: red;
+	background-color: #F2F4F7;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .topNav {
 	width: 100vw;
 	height: 6vh;
-	/*background-color: red;*/
-	font-size: 100px;
+	background-color: white;
+	box-shadow: 0px 2px 4px #ccc;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.profile {
+	background-color: #ccc;
+	height: 5vh;
+	width: 5vh;
+	border-radius: 50%;
+	margin-right: 20px;
+}
+
+.authContainer {
+	background-color: #F2F4F7;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	height: 100vh;
+	width: 60vw;
+}
+
+.usersList {
+	width: 30vw;
+	height: 40vh;
+	display: flex;
+	flex-direction: center;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid red;
+}
+
+.authForm {
+	width: 24vw;
+	min-height: 32vh;
+	background-color: white;
+	border-radius: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	box-shadow: 0px 2px 4px #ccc;
+}
+
+.loginForm {
+	display: flex;
+	flex-direction: column;
+	width: 20vw;
+	border-bottom: 1px solid #ccc;
+	padding: 20px 0 0 0;
+}
+
+.loginInput {
+	height: 6vh;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	margin: 10px 0;
+	background-color: white;
+	color: black;
+	padding: 0 20px;
+	border-radius: 10px;
+}
+
+.loginInput:active {
+	border: 1px solid #226BF6;
+	background-color: #F2F4F7;
+}
+
+.loginButton, .createAccount {
+	font-weight: 700;
+	font-size: 21px;
+	color: white;
+	height: 6vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 10px;
+}
+
+.forgotPassword {
+	color: #226BF6;
+	font-size: 21px;
+	margin: 10px 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 6vh;
+}
+
+.loginButton {
+	background-color:  #226BF6; 
+}
+
+.createAccount {
+	width: 16vw;
+	background-color: #63B343;
+	margin: 40px 0;
 }
