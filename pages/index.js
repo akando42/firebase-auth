@@ -50,6 +50,10 @@ export default class Home extends React.Component {
 		this.setSignupPassword = this.setSignupPassword.bind(this)
 		this.setSignupConfirmPassword = this.setSignupConfirmPassword.bind(this)
 		this.signupNewUser = this.signupNewUser.bind(this)
+
+		this.setLoginEmail = this.setLoginEmail.bind(this)
+		this.setLoginPassword = this.setLoginPassword.bind(this)
+		this.loginUser = this.loginUser.bind(this)
 	}
 
 	async createUser(){
@@ -105,13 +109,43 @@ export default class Home extends React.Component {
 				.then(async(userCredential) => {
 					const user = userCredential.user;
 					console.log("Firebase User ", user)
-					
+
 					updateProfile(auth.currentUser,{
 						displayName: name
+					})
+
+					this.setState({
+						creatingUser: false
 					})
 				})
 
 		}
+	}
+
+	async setLoginEmail(event){
+		this.setState({
+			email: event.target.value
+		})
+	}
+
+	async setLoginPassword(event){
+		this.setState({
+			password: event.target.value
+		})
+	}
+
+	async loginUser(){
+		let email = this.state.email
+		let password = this.state.password
+
+		if(email && password){
+			signInWithEmailAndPassword(auth, email, password)
+				.then((userCredential) => {
+					console.log("Successful Login User", userCredential)
+
+				})
+		}
+		
 	}
 
 	async logOut(){
@@ -201,9 +235,12 @@ export default class Home extends React.Component {
 													className={styles.loginInput} 
 													type="password"
 													placeholder="Enter Your Password"
-													onChange={this.setLoginEmail}
+													onChange={this.setLoginPassword}
 												/>
-												<div className={styles.loginButton}>
+												<div 
+													className={styles.loginButton}
+													onClick={this.loginUser}
+												>
 													Log in
 												</div>
 												<div  className={styles.forgotPassword} > 
