@@ -275,7 +275,6 @@ export default class Home extends React.Component {
 										<div className={styles.postMedia}>
 											<div className={styles.uploadMedia}>Add Video</div>
 											<div className={styles.uploadMedia}>Add Image</div>
-											<div className={styles.uploadMedia}>Add Emoji</div>
 										</div>
 									</div>
 								</div>
