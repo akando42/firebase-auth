@@ -49,7 +49,7 @@ export default class Home extends React.Component {
 			confirm_password: '',
 			activeUserName: '',
 			activeUserEmail: '',
-			activeUserPhoto: ''
+			activeUserPhoto: 'https://avatars.githubusercontent.com/u/1859661?v=4'
 		}
 
 		this.createUser = this.createUser.bind(this)
@@ -159,7 +159,8 @@ export default class Home extends React.Component {
 					console.log("Successful Login User", userCredential)
 					let user = userCredential.user
 					this.setState({
-						authenticated: true
+						authenticated: true,
+						logoutPanel: false
 					})
 					localStorage.setItem("user_token", user.accessToken)
 					localStorage.setItem("user_email", user.email)
@@ -179,10 +180,11 @@ export default class Home extends React.Component {
 			onAuthStateChanged(auth, async(user) => {
       	if (user) {
       		console.log("Firebase Authenticated User", user)
+      		let photo = user.photo ? user.photo : "https://storage.googleapis.com/hotspots-hanoi/Profile.jpg"
       		this.setState({
       			activeUserName: user.displayName,
       			activeUserEmail: user.email,
-      			activeUserPhoto: user.photoURL
+      			activeUserPhoto: photo
       		})
 
       		const querySnapshot = await getDocs(collection(db, "bookings"));
@@ -224,11 +226,12 @@ export default class Home extends React.Component {
 			<div className={styles.container}>
 				{
 					this.state.authenticated 
-					?	<div>
+					?	<div className={styles.protectedArea}>
 							<div className={styles.topNav}> 
 								<div 
 									className={styles.profile}
 									onClick={this.showLogout}
+									style={{ backgroundImage: `url(${this.state.activeUserPhoto})` }}
 								>
 
 								</div>
@@ -239,16 +242,46 @@ export default class Home extends React.Component {
 											className={styles.profileOptions}
 											onClick={this.logOut}
 										>
-											Logout
+											<div className={styles.option}>
+												Logout
+											</div>
 										</div>
 									: <div></div>
-								}
-							
+								}					
 							</div>
 							<div className={styles.authenticatedData}>
-								<div> {this.state.activeUserName} </div>
-								<div> {this.state.activeUserEmail} </div>
-								<div> {this.state.activeUserPhoto} </div>
+
+								<div className={styles.userProfileList}>
+									<div className={styles.activeUser}>
+										<img
+											className={styles.userPostProfile}
+											img src={this.state.activeUserPhoto} 
+										/>
+										<div> {this.state.activeUserName} </div>
+									</div>
+								</div>
+
+								<div className={styles.newsFeed}>
+									<div className={styles.postForm}>
+										<div className={styles.postText}>
+											<img
+												className={styles.userPostProfile}
+												src={this.state.activeUserPhoto} 
+											/>
+											<input 
+												className={styles.userPostText}
+											/>
+										</div>
+										<div className={styles.postMedia}>
+											<div className={styles.uploadMedia}>Add Video</div>
+											<div className={styles.uploadMedia}>Add Image</div>
+											<div className={styles.uploadMedia}>Add Emoji</div>
+										</div>
+									</div>
+								</div>
+
+								<div className={styles.friendList}>
+								</div>
 							</div>
 						</div>
 					:   <div className={styles.authContainer}>
