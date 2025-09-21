@@ -8,11 +8,17 @@ import {
 	TwitterAuthProvider, 
 	GithubAuthProvider, 
 	getAuth, 
+	onAuthStateChanged,
 	signInWithPopup,
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword, 
-	updateProfile
+	updateProfile,
+	signOut
 } from "firebase/auth";
+
+
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAiFHqtPYiH5IsCCUNHYBwiwyUFA_bqrQ4",
@@ -26,19 +32,24 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
+const db = getFirestore();
 
 export default class Home extends React.Component {
 	constructor(props){
 		super(props)
 
 		this.state = {
+			logoutPanel: false,
 			authenticated: false,
 			creatingUser: false, 
 			firstName: '',
 			lastName: '',
 			email: '',
 			password:'',
-			confirm_password: ''
+			confirm_password: '',
+			activeUserName: '',
+			activeUserEmail: '',
+			activeUserPhoto: ''
 		}
 
 		this.createUser = this.createUser.bind(this)
@@ -54,6 +65,10 @@ export default class Home extends React.Component {
 		this.setLoginEmail = this.setLoginEmail.bind(this)
 		this.setLoginPassword = this.setLoginPassword.bind(this)
 		this.loginUser = this.loginUser.bind(this)
+
+
+		this.showLogout = this.showLogout.bind(this)
+		this.logOut = this.logOut.bind(this)
 	}
 
 	async createUser(){
@@ -142,19 +157,66 @@ export default class Home extends React.Component {
 			signInWithEmailAndPassword(auth, email, password)
 				.then((userCredential) => {
 					console.log("Successful Login User", userCredential)
-
+					let user = userCredential.user
+					this.setState({
+						authenticated: true
+					})
+					localStorage.setItem("user_token", user.accessToken)
+					localStorage.setItem("user_email", user.email)
 				})
 		}
 		
 	}
 
-	async logOut(){
+	async checkAuthentication(){
+		let token = localStorage.getItem("user_token")
+		let email = localStorage.getItem("user_email")
+		if (token && email){
+			this.setState({
+				authenticated: true
+			})
+
+			onAuthStateChanged(auth, async(user) => {
+      	if (user) {
+      		console.log("Firebase Authenticated User", user)
+      		this.setState({
+      			activeUserName: user.displayName,
+      			activeUserEmail: user.email,
+      			activeUserPhoto: user.photoURL
+      		})
+
+      		const querySnapshot = await getDocs(collection(db, "bookings"));
+        	querySnapshot.forEach((doc) => {
+          	console.log(doc.id, " => ", doc.data());
+        	});
+      	}
+      })
+		}
+	}
+
+	async showLogout(){
 		this.setState({
-			authenticated: false
+			logoutPanel: !this.state.logoutPanel
+		})
+	}
+
+	async logOut(){
+		signOut(auth).then(() => {
+			console.log("User Signed Out Successfully")
+			localStorage.removeItem("user_email");
+			localStorage.removeItem("user_token");
+
+			this.setState({
+				authenticated: false
+			})
+		})
+		.catch((error) => {
+			console.error("Error Signing Out", error)
 		})
 	}
 
 	componentDidMount(){
+		this.checkAuthentication()
 	}
 
 	render(){
@@ -162,12 +224,31 @@ export default class Home extends React.Component {
 			<div className={styles.container}>
 				{
 					this.state.authenticated 
-					?	<div className={styles.topNav}> 
-							<div 
-								className={styles.profile}
-								onClick={this.logOut}
-							>
+					?	<div>
+							<div className={styles.topNav}> 
+								<div 
+									className={styles.profile}
+									onClick={this.showLogout}
+								>
 
+								</div>
+
+								{
+									this.state.logoutPanel
+								  ? <div 
+											className={styles.profileOptions}
+											onClick={this.logOut}
+										>
+											Logout
+										</div>
+									: <div></div>
+								}
+							
+							</div>
+							<div className={styles.authenticatedData}>
+								<div> {this.state.activeUserName} </div>
+								<div> {this.state.activeUserEmail} </div>
+								<div> {this.state.activeUserPhoto} </div>
 							</div>
 						</div>
 					:   <div className={styles.authContainer}>
